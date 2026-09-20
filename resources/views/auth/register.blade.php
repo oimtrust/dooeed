@@ -1,41 +1,31 @@
 @extends('layouts.app')
 
-@section('title', 'Sign up')
+@section('title', 'Daftar — Dooeed')
 @section('page', 'register')
 
 @section('content')
-<main class="page page-center">
-  <div class="container container-tight py-4">
-    <div class="text-center mb-4">
-      <a href="{{ route('home') }}" class="navbar-brand navbar-brand-autodark">Dooeed</a>
-    </div>
-    <div class="card card-md">
-      <div class="card-body">
-        <h1 class="h2 text-center mb-4">Create new account</h1>
+<x-auth-shell eyebrow="LANGKAH PERTAMA ANDA" heading="Mulai cerita finansial Anda." description="Buat akun dan ambil langkah pertama menuju keuangan yang lebih terencana.">
         <form id="register-form" novalidate>
           <div class="mb-3">
-            <label class="form-label" for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" autocomplete="name" required />
+            <label class="form-label" for="name">Nama lengkap</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Nama lengkap Anda" autocomplete="name" maxlength="255" required />
           </div>
           <div class="mb-3">
-            <label class="form-label" for="email">Email address</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" autocomplete="email" required />
+            <label class="form-label" for="email">Alamat email</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="nama@email.com" autocomplete="email" required />
           </div>
           <div class="mb-3">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Min. 8 characters" autocomplete="new-password" required />
+            <label class="form-label" for="password">Kata sandi</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Minimal 8 karakter" autocomplete="new-password" minlength="8" required />
           </div>
           <div class="mb-3">
-            <label class="form-label" for="password_confirmation">Confirm password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Repeat password" autocomplete="new-password" required />
+            <label class="form-label" for="password_confirmation">Konfirmasi kata sandi</label>
+            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Ulangi kata sandi" autocomplete="new-password" minlength="8" required />
           </div>
           <div class="form-footer">
-            <button type="submit" class="btn btn-primary w-100">Create account</button>
+            <button type="submit" class="btn btn-primary w-100">Buat akun</button>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="text-center text-secondary mt-3">Already have an account? <a href="{{ route('login') }}">Sign in</a></div>
-  </div>
-</main>
+  <div class="text-center text-secondary mt-4">Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a></div>
+</x-auth-shell>
 @endsection

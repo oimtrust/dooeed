@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('physical_asset_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('physical_asset_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('account_id')->nullable()->constrained()->nullOnDelete()->comment('kas sumber / penerima');
-            $table->foreignId('transaction_id')->nullable()->constrained()->nullOnDelete()->comment('link ke transactions');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('physical_asset_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('account_id')->nullable()->constrained()->nullOnDelete()->comment('kas sumber / penerima');
+            $table->foreignUuid('transaction_id')->nullable()->constrained()->nullOnDelete()->comment('link ke transactions');
             $table->date('transaction_date');
             $table->string('type')->comment('buy, sell');
             $table->decimal('quantity', 18, 2)->default(0);

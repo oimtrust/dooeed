@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('physical_assets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('name')->comment('Rumah, Mobil, Iphone 15');
             $table->decimal('quantity', 18, 2)->default(1);
             $table->decimal('avg_buy_price', 18, 2)->default(0);

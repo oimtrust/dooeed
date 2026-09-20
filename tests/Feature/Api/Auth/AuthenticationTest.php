@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 uses(LazilyRefreshDatabase::class);
@@ -77,4 +78,22 @@ it('logs out and revokes the token', function (): void {
 
 it('rejects unauthenticated access to me', function (): void {
     $this->getJson('/api/v1/auth/me')->assertUnauthorized();
+});
+
+it('authenticates a subsequent request with the bearer token issued at login', function (): void {
+    $user = User::factory()->create(['password' => 'password123']);
+
+    expect(Str::isUuid($user->id))->toBeTrue();
+
+    $response = $this->postJson('/api/v1/auth/login', [
+        'email' => $user->email,
+        'password' => 'password123',
+    ])->assertOk()->assertJsonPath('data.user.id', $user->id);
+
+    $this->app['auth']->forgetGuards();
+
+    $this->withToken($response->json('data.token'))
+        ->getJson('/api/v1/auth/me')
+        ->assertOk()
+        ->assertJsonPath('data.id', $user->id);
 });

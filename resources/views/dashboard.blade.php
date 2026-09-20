@@ -1,33 +1,255 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard — Dooeed')
 @section('page', 'dashboard')
 
 @section('content')
 <div class="page">
+  <x-dashboard-menu />
   <div class="page-wrapper">
-    <div class="page-header d-print-none">
+    <header class="navbar navbar-expand-md d-print-none">
       <div class="container-xl">
-        <div class="row g-2 align-items-center">
-          <div class="col">
-            <h2 class="page-title">Dashboard</h2>
-          </div>
-          <div class="col-auto ms-auto">
-            <button type="button" id="logout-button" class="btn btn-outline-danger">Logout</button>
-          </div>
+        <span class="navbar-brand fs-4">Ruang keuangan Anda</span>
+        <div class="d-flex align-items-center gap-3 ms-auto">
+          <span class="text-secondary small d-none d-md-block" id="user-email">Memuat akun…</span>
+          <button type="button" id="logout-button" class="btn btn-outline-secondary btn-sm">Keluar</button>
         </div>
       </div>
-    </div>
-    <div class="page-body">
-      <div class="container-xl">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Welcome, <span id="user-name">…</span></h3>
-            <p class="text-secondary mb-0" id="user-email">…</p>
+    </header>
+    <main class="page-body">
+      <div class="container-xl tab-content">
+        <section class="tab-pane fade show active" id="panel-dashboard" role="tabpanel" aria-labelledby="menu-dashboard" tabindex="0">
+          <div class="row align-items-center mb-4 g-3">
+            <div class="col">
+              <div class="page-pretitle">Ringkasan keuangan</div>
+              <h1 class="page-title mt-1">Dashboard</h1>
+            </div>
+            <div class="col-auto"><span class="badge bg-blue-lt">Perjalanan finansial Anda</span></div>
           </div>
-        </div>
+          <div class="card bg-primary-lt mb-4">
+            <div class="card-body p-4">
+              <div class="row align-items-center g-3">
+                <div class="col-lg-8">
+                  <div class="subheader text-primary mb-2">Selangkah lebih terencana</div>
+                  <h2>Halo, <span id="user-name">…</span>!</h2>
+                  <p class="text-secondary mb-0">Kenali kondisi keuangan, susun anggaran, dan mulai wujudkan impian Anda. Semuanya dimulai dari mencatat apa yang Anda miliki hari ini.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                  <button class="btn btn-primary" type="button" data-dashboard-menu="profil-kekayaan-awal">Lengkapi profil kekayaan</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row row-cards mb-4">
+            @foreach (['Total aset' => 'Seluruh kekayaan yang Anda miliki', 'Total kewajiban' => 'Utang dan kewajiban yang berjalan', 'Kekayaan bersih' => 'Total aset dikurangi kewajiban', 'Kemampuan menabung' => 'Dana yang dapat disisihkan per bulan'] as $label => $description)
+              <div class="col-sm-6 col-xl-3">
+                <div class="card h-100"><div class="card-body">
+                  <div class="subheader">{{ $label }}</div>
+                  <div class="h1 my-3 text-secondary" aria-label="Data belum tersedia">—</div>
+                  <div class="text-secondary small">{{ $description }}</div>
+                </div></div>
+              </div>
+            @endforeach
+          </div>
+          <div class="row row-cards">
+            <div class="col-lg-7">
+              <div class="card h-100">
+                <div class="card-header"><h2 class="card-title">Mulai dari sini</h2></div>
+                <div class="list-group list-group-flush">
+                  @foreach ([['profil-kekayaan-awal', 'Catat kekayaan awal', 'Kenali aset, rekening, dan kewajiban Anda.'], ['profil-kemampuan-menabung', 'Kenali kemampuan menabung', 'Petakan pendapatan dan kebutuhan rutin.'], ['atur-budgeting', 'Susun anggaran', 'Siapkan alokasi untuk kebutuhan dan tujuan Anda.']] as [$menu, $label, $description])
+                    <button type="button" class="list-group-item list-group-item-action d-flex gap-3 align-items-center py-3" data-dashboard-menu="{{ $menu }}">
+                      <span class="avatar bg-blue-lt">{{ $loop->iteration }}</span>
+                      <span><span class="d-block fw-medium">{{ $label }}</span><span class="d-block text-secondary small mt-1">{{ $description }}</span></span>
+                      <span class="ms-auto text-secondary" aria-hidden="true">→</span>
+                    </button>
+                  @endforeach
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="card h-100">
+                <div class="card-header"><h2 class="card-title">Dream Tracker</h2><span class="badge bg-purple-lt ms-auto">Tujuan Anda</span></div>
+                <div class="card-body">
+                  <h3>Impian besar, langkah kecil.</h3>
+                  <p class="text-secondary">Siapkan tempat untuk merencanakan dana darurat, rumah pertama, atau perjalanan impian Anda.</p>
+                  <button class="btn btn-outline-primary" type="button" data-dashboard-menu="dream-tracker">Jelajahi Dream Tracker</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header"><h2 class="card-title">Aktivitas keuangan</h2></div>
+                <div class="empty py-5">
+                  <p class="empty-title">Ringkasan transaksi belum tersedia</p>
+                  <p class="empty-subtitle text-secondary">Pendapatan, pengeluaran, dan mutasi rekening akan ditampilkan setelah fitur pencatatan tersedia.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="tab-pane fade" id="panel-profil-kekayaan-awal" role="tabpanel" aria-labelledby="menu-profil-kekayaan-awal" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Profil Kekayaan Awal</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Profil Kekayaan Awal</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-profil-kemampuan-menabung" role="tabpanel" aria-labelledby="menu-profil-kemampuan-menabung" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Profil Kemampuan Menabung</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Profil Kemampuan Menabung</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-cek-kesehatan-finansial" role="tabpanel" aria-labelledby="menu-cek-kesehatan-finansial" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Cek Kesehatan Finansial</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Cek Kesehatan Finansial</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-level-kekayaan" role="tabpanel" aria-labelledby="menu-level-kekayaan" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Level Kekayaan</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Level Kekayaan</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-saran-budgeting" role="tabpanel" aria-labelledby="menu-saran-budgeting" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Saran Budgeting</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Saran Budgeting</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-laporan-laba-rugi" role="tabpanel" aria-labelledby="menu-laporan-laba-rugi" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Laporan Laba Rugi</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Laporan Laba Rugi</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-atur-budgeting" role="tabpanel" aria-labelledby="menu-atur-budgeting" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Atur Budgeting</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Atur Budgeting</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-mutasi-rekening" role="tabpanel" aria-labelledby="menu-mutasi-rekening" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Mutasi Rekening</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Mutasi Rekening</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-dream-tracker" role="tabpanel" aria-labelledby="menu-dream-tracker" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Dream Tracker</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Dream Tracker</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-pindah-kas-tabung" role="tabpanel" aria-labelledby="menu-pindah-kas-tabung" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Pindah Kas/ Tabung</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Pindah Kas/ Tabung</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-pendapatan" role="tabpanel" aria-labelledby="menu-pendapatan" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Pendapatan</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Pendapatan</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-pengeluaran" role="tabpanel" aria-labelledby="menu-pengeluaran" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Pengeluaran</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Pengeluaran</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-utang" role="tabpanel" aria-labelledby="menu-utang" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Utang</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Utang</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-piutang" role="tabpanel" aria-labelledby="menu-piutang" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Piutang</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Piutang</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-beli-jual-barang" role="tabpanel" aria-labelledby="menu-beli-jual-barang" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Beli Jual Barang</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Beli Jual Barang</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
+        <section class="tab-pane fade" id="panel-investasi" role="tabpanel" aria-labelledby="menu-investasi" tabindex="0">
+          <div class="page-pretitle">Keuangan pribadi</div>
+          <h1 class="page-title mt-1 mb-4">Investasi</h1>
+          <div class="card"><div class="empty py-5">
+            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
+            <h2 class="empty-title">Investasi</h2>
+            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
+            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
+          </div></div>
+        </section>
       </div>
-    </div>
+    </main>
+    <footer class="footer footer-transparent d-print-none"><div class="container-xl text-secondary small">Dooeed · Kelola hari ini, rencanakan masa depan.</div></footer>
   </div>
 </div>
 @endsection

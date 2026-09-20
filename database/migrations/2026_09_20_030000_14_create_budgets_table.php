@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('budgets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->date('month')->comment('isi tgl 1 tiap bulan');
             $table->string('group_name')->comment('pendapatan, kebutuhan_pokok, beli_barang, beli_aset, bayar_utang, tabungan');
             $table->decimal('planned_pct', 5, 4)->nullable();

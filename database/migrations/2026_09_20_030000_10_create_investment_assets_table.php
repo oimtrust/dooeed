@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investment_assets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('investment_account_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('investment_account_id')->constrained()->cascadeOnDelete();
             $table->string('asset_code');
             $table->string('asset_name');
             $table->string('asset_type')->comment('stock, mutual_fund, gold, crypto, bond, deposito');

@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('debt_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('debt_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('transaction_id')->nullable()->constrained()->nullOnDelete()->comment('null untuk jadwal belum dibayar');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('debt_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('transaction_id')->nullable()->constrained()->nullOnDelete()->comment('null untuk jadwal belum dibayar');
             $table->date('transaction_date');
             $table->string('type')->comment('disbursement, repayment, receive_payment, schedule');
             $table->decimal('amount', 18, 2);

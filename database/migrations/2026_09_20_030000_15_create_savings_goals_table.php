@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('savings_goals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('account_id')->nullable()->constrained()->nullOnDelete()->comment('link ke accounts amplop, opsional');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('account_id')->nullable()->constrained()->nullOnDelete()->comment('link ke accounts amplop, opsional');
             $table->string('name')->comment('Dana Darurat, Rumah, Education');
             $table->decimal('target_amount', 18, 2)->default(0);
             $table->date('deadline')->nullable();

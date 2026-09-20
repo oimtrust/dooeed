@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 uses(LazilyRefreshDatabase::class);
@@ -18,7 +19,18 @@ it('registers a user and returns a bearer token', function (): void {
     $response->assertCreated()
         ->assertJsonStructure(['data' => ['user' => ['id', 'name', 'email'], 'token', 'token_type']]);
 
-    $this->assertDatabaseHas('users', ['email' => 'finesse@example.com']);
+    $userId = $response->json('data.user.id');
+
+    expect($userId)->toBeString();
+    expect(Str::isUuid($userId))->toBeTrue();
+
+    $this->assertDatabaseHas('users', ['id' => $userId, 'email' => 'finesse@example.com']);
+    $this->assertDatabaseHas('personal_access_tokens', ['tokenable_id' => $userId]);
+
+    $this->withToken($response->json('data.token'))
+        ->getJson('/api/v1/auth/me')
+        ->assertOk()
+        ->assertJsonPath('data.id', $userId);
 });
 
 it('rejects registration with duplicate email', function (): void {

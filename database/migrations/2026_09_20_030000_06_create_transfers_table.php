@@ -9,17 +9,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transfers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('from_account_id')->constrained('accounts')->restrictOnDelete();
-            $table->foreignId('to_account_id')->constrained('accounts')->restrictOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('from_account_id')->constrained('accounts')->restrictOnDelete();
+            $table->foreignUuid('to_account_id')->constrained('accounts')->restrictOnDelete();
             $table->date('transfer_date');
             $table->decimal('amount', 18, 2);
             $table->decimal('fee_amount', 18, 2)->default(0);
-            $table->foreignId('fee_transaction_id')->nullable()->constrained('transactions')->nullOnDelete()->comment('opsional expense fee');
+            $table->foreignUuid('fee_transaction_id')->nullable()->constrained('transactions')->nullOnDelete()->comment('opsional expense fee');
             $table->text('description')->nullable();
-            $table->foreignId('transfer_out_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
-            $table->foreignId('transfer_in_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
+            $table->foreignUuid('transfer_out_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
+            $table->foreignUuid('transfer_in_transaction_id')->nullable()->constrained('transactions')->nullOnDelete();
             $table->timestamps();
         });
     }

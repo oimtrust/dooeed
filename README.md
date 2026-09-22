@@ -103,6 +103,12 @@ DB_USERNAME=<your-database-user>
 DB_PASSWORD=<your-database-password>
 
 MAIL_MAILER=log
+
+...
+
+JWT_SECRET=
+JWT_TTL=60
+JWT_REFRESH_TTL=20160
 ```
 
 Replace all angle-bracket placeholders. Set `APP_URL` to the address shown by your local web environment, including the correct scheme and port. Password reset links depend on this setting.
@@ -115,6 +121,13 @@ Generate the application key for this new installation:
 php artisan key:generate --no-interaction
 composer check-platform-reqs
 ```
+
+Generate jwt/token following this command:
+
+```bash
+php artisan jwt:secret
+```
+This will update your `.env` file with something like `JWT_SECRET=foobar`
 
 Keep `.env` local. Never commit credentials, application keys, or bearer tokens.
 

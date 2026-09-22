@@ -28,7 +28,7 @@ it('requires authentication and forbids ordinary users throughout the admin pane
 });
 
 it('bridges bearer authentication to an admin web session', function (): void {
-    $token = $this->admin->createToken('test')->plainTextToken;
+    $token = jwtFor($this->admin);
     $this->withToken($token)->postJson('/admin/session')->assertOk()->assertJsonPath('redirect', route('admin.users.index'));
     $this->assertAuthenticatedAs($this->admin, 'web');
     $this->get('/admin/users')->assertOk();
@@ -49,11 +49,17 @@ it('lists users with counts, validated sorting, combined filters and twenty per 
     $this->getJson('/api/v1/admin/users?page=2')->assertOk()->assertJsonCount(5, 'data');
 });
 
-it('suspends and activates a user, revokes tokens and records the reason', function (): void {
-    $this->target->createToken('old');
+it('suspends and activates a user, blocks their token and records the reason', function (): void {
+    $token = jwtFor($this->target);
     $this->actingAs($this->admin)->patchJson('/api/v1/admin/users/'.$this->target->id, ['action' => 'suspend', 'reason' => 'spam', 'confirmed' => 1])->assertOk();
     expect($this->target->fresh()->status)->toBe('suspended');
-    expect($this->target->tokens()->count())->toBe(0);
+    $this->getJson('/api/v1/auth/me', ['Authorization' => 'Bearer '.$token])->assertForbidden();
+
+    // That probe authenticated as the suspended target; start the admin's next
+    // request from empty guards so it is not answered as the target.
+    resetAuthState();
+    $this->actingAs($this->admin, 'web');
+
     $this->assertDatabaseHas('audit_logs', ['admin_id' => $this->admin->id, 'target_user_id' => $this->target->id, 'action' => 'suspend', 'reason' => 'spam']);
     $this->postJson('/api/v1/auth/login', ['email' => $this->target->email, 'password' => 'password'])
         ->assertUnprocessable()->assertJsonPath('errors.email.0', 'Akun ditangguhkan');
@@ -71,10 +77,10 @@ it('requires confirmation and a suspension reason and protects the acting admin'
 
 it('resets passwords immediately and sends a working reset link', function (): void {
     Notification::fake();
-    $this->target->createToken('old');
+    $token = jwtFor($this->target);
     $this->actingAs($this->admin)->patchJson('/api/v1/admin/users/'.$this->target->id, ['action' => 'reset_password', 'confirmed' => 1])->assertOk();
     expect(Hash::check('password', $this->target->fresh()->password))->toBeFalse();
-    expect($this->target->tokens()->count())->toBe(0);
+    $this->getJson('/api/v1/auth/me', ['Authorization' => 'Bearer '.$token])->assertUnauthorized();
     $this->postJson('/api/v1/auth/login', ['email' => $this->target->email, 'password' => 'password'])->assertUnprocessable();
     Notification::assertSentTo($this->target, ResetPassword::class, function ($notification): bool {
         $this->postJson('/api/v1/auth/reset-password', ['email' => $this->target->email, 'token' => $notification->token, 'password' => 'new-password123', 'password_confirmation' => 'new-password123'])->assertOk();
@@ -153,10 +159,10 @@ it('rolls back password changes and audit when reset delivery is throttled', fun
     Notification::fake();
     Password::createToken($this->target);
     $oldPassword = $this->target->password;
-    $this->target->createToken('retained');
+    $token = jwtFor($this->target);
     $this->actingAs($this->admin)->patchJson('/api/v1/admin/users/'.$this->target->id, ['action' => 'reset_password', 'confirmed' => 1])->assertUnprocessable();
     expect($this->target->fresh()->password)->toBe($oldPassword);
-    expect($this->target->tokens()->count())->toBe(1);
+    $this->getJson('/api/v1/auth/me', ['Authorization' => 'Bearer '.$token])->assertOk();
     expect(AuditLog::count())->toBe(0);
 });
 
@@ -185,7 +191,7 @@ it('protects all admin API endpoints independently of the HTML shell', function 
 });
 
 it('supports bearer-only admin API clients and never exposes credentials', function (): void {
-    $token = $this->admin->createToken('api-client')->plainTextToken;
+    $token = jwtFor($this->admin);
     $this->withToken($token)->getJson('/api/v1/admin/users?search=budi')->assertOk()
         ->assertJsonMissingPath('data.0.password')->assertJsonMissingPath('data.0.remember_token');
     $this->getJson('/api/v1/admin/users/'.$this->target->id)->assertOk()

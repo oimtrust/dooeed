@@ -17,7 +17,6 @@ class ResetUserPassword
     {
         $status = Password::reset($data, function (User $user, string $password): void {
             $user->forceFill(['password' => $password, 'remember_token' => Str::random(60)])->save();
-            $user->tokens()->delete();
 
             event(new PasswordReset($user));
         });

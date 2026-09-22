@@ -3,17 +3,30 @@ import { authStore } from './store.js';
 
 export const authApi = {
     async register(data) {
-        const { data: body } = await http.post('/auth/register', data);
+        const { data: body } = await http.post('/session/register', data, {
+            baseURL: '',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
         authStore.save(body.data);
 
         return body.data;
     },
 
     async login(credentials) {
-        const { data: body } = await http.post('/auth/login', credentials);
+        const { data: body } = await http.post('/session/login', credentials, {
+            baseURL: '',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
         authStore.save(body.data);
 
         return body.data;
+    },
+
+    async openAdminPanel(url) {
+        const { data } = await http.post(url, {}, {
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
+        window.location.href = data.redirect;
     },
 
     async logout() {
@@ -21,6 +34,10 @@ export const authApi = {
             await http.post('/auth/logout');
         } finally {
             authStore.clear();
+            await http.delete('/admin/session', {
+                baseURL: '',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+            });
         }
     },
 

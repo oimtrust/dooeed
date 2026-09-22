@@ -1,0 +1,276 @@
+// Finesse Wealth Tracker - Laravel ready
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table users [headercolor: #93FB13] {
+  id integer [primary key, increment]
+  name varchar [not null]
+  email varchar [not null, unique]
+  email_verified_at timestamp
+  password varchar [not null]
+  remember_token varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table account_types {
+  id integer [primary key, increment]
+  name varchar [not null, unique, note: 'cash, bank, e-wallet, deposito, envelope']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table accounts {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  account_type_id integer [not null]
+  name varchar [not null, note: 'BCA, Jago, Blu + amplop: Rumah, Education, Dana Darurat']
+  account_number varchar
+  currency varchar [not null, default: 'IDR']
+  opening_balance decimal(18,2) [not null, default: 0]
+  current_balance decimal(18,2) [not null, default: 0, note: 'maintain via observer, jangan input manual']
+  target_amount decimal(18,2) [note: 'untuk Dream Tracker, null jika bukan amplop']
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, name) [unique]
+  }
+}
+
+Table categories {
+  id integer [primary key, increment]
+  user_id integer [note: 'null = kategori global', not null]
+  parent_id integer
+  name varchar [not null]
+  type varchar [not null, note: 'income, expense']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, name, type) [unique]
+  }
+}
+
+Table transactions {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  account_id integer [not null]
+  category_id integer
+  transaction_date date [not null]
+  type varchar [not null, note: 'income, expense, transfer_in, transfer_out']
+  amount decimal(18,2) [not null]
+  description text
+  reference_no varchar
+  related_transaction_id integer
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, transaction_date)
+    (account_id, transaction_date)
+  }
+}
+
+Table transfers {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  from_account_id integer [not null]
+  to_account_id integer [not null]
+  transfer_date date [not null]
+  amount decimal(18,2) [not null]
+  fee_amount decimal(18,2) [not null, default: 0]
+  fee_transaction_id integer [note: 'opsional expense fee']
+  description text
+  transfer_out_transaction_id integer
+  transfer_in_transaction_id integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table contacts {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  name varchar [not null]
+  type varchar [not null, note: 'person, company']
+  phone varchar
+  email varchar
+  address text
+  notes text
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, name) [unique]
+  }
+}
+
+Table debts {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  account_id integer [note: 'nullable untuk saldo awal KPR']
+  contact_id integer [not null]
+  kind varchar [not null, default: 'loan', note: 'loan, credit_card, paylater']
+  type varchar [not null, note: 'debt = utang, receivable = piutang']
+  title varchar [not null]
+  principal_amount decimal(18,2) [not null]
+  outstanding_amount decimal(18,2) [not null]
+  start_date date [not null]
+  due_date date
+  status varchar [not null, default: 'active', note: 'active, paid, overdue, canceled']
+  description text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table debt_transactions {
+  id integer [primary key, increment]
+  debt_id integer [not null]
+  transaction_id integer [note: 'null untuk jadwal belum dibayar']
+  transaction_date date [not null]
+  type varchar [not null, note: 'disbursement, repayment, receive_payment, schedule']
+  amount decimal(18,2) [not null]
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table investment_accounts {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  name varchar [not null, note: 'Stock Portfolio, RDN Pensiun']
+  platform varchar
+  account_number varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table investment_assets {
+  id integer [primary key, increment]
+  investment_account_id integer [not null]
+  asset_code varchar [not null]
+  asset_name varchar [not null]
+  asset_type varchar [not null, note: 'stock, mutual_fund, gold, crypto, bond, deposito']
+  opening_quantity decimal(18,8) [not null, default: 0]
+  opening_price decimal(18,2) [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (investment_account_id, asset_code) [unique]
+  }
+}
+
+Table investment_transactions {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  investment_account_id integer [not null]
+  investment_asset_id integer [not null]
+  funding_account_id integer [note: 'nullable untuk dividen/reinvest/opening']
+  transaction_date date [not null]
+  type varchar [not null, note: 'buy, sell, dividend, profit, fee']
+  quantity decimal(18,8) [not null, default: 0]
+  price decimal(18,2) [not null, default: 0]
+  gross_amount decimal(18,2) [not null, default: 0]
+  fee_amount decimal(18,2) [not null, default: 0]
+  net_amount decimal(18,2) [not null, default: 0]
+  transaction_id integer
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table physical_assets {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  name varchar [not null, note: 'Rumah, Mobil, Iphone 15']
+  quantity decimal(18,2) [not null, default: 1]
+  avg_buy_price decimal(18,2) [not null, default: 0]
+  notes text
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, name) [unique]
+  }
+}
+
+Table physical_asset_transactions {
+  id integer [primary key, increment]
+  physical_asset_id integer [not null]
+  account_id integer [note: 'kas sumber / penerima']
+  transaction_id integer [note: 'link ke transactions']
+  transaction_date date [not null]
+  type varchar [not null, note: 'buy, sell']
+  quantity decimal(18,2) [not null, default: 0]
+  price decimal(18,2) [not null, default: 0]
+  gross_amount decimal(18,2) [not null, default: 0]
+  fee_amount decimal(18,2) [not null, default: 0]
+  net_amount decimal(18,2) [not null, default: 0]
+  profit_amount decimal(18,2) [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table budgets {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  month date [not null, note: 'isi tgl 1 tiap bulan']
+  group_name varchar [not null, note: 'pendapatan, kebutuhan_pokok, beli_barang, beli_aset, bayar_utang, tabungan']
+  planned_pct decimal(5,4)
+  planned_amount decimal(18,2) [not null, default: 0]
+  notes text
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, month, group_name) [unique]
+  }
+}
+
+Table savings_goals {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  account_id integer [note: 'link ke accounts amplop, opsional']
+  name varchar [not null, note: 'Dana Darurat, Rumah, Education']
+  target_amount decimal(18,2) [not null, default: 0]
+  deadline date
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Ref: accounts.user_id > users.id
+Ref: accounts.account_type_id > account_types.id
+Ref: categories.user_id > users.id
+Ref: categories.parent_id >? categories.id
+Ref: transactions.user_id > users.id
+Ref: transactions.account_id > accounts.id
+Ref: transactions.category_id >? categories.id
+Ref: transactions.related_transaction_id >? transactions.id
+Ref: transfers.user_id > users.id
+Ref: transfers.from_account_id > accounts.id
+Ref: transfers.to_account_id > accounts.id
+Ref: transfers.transfer_out_transaction_id >? transactions.id
+Ref: transfers.transfer_in_transaction_id >? transactions.id
+Ref: transfers.fee_transaction_id >? transactions.id
+Ref: contacts.user_id > users.id
+Ref: debts.user_id > users.id
+Ref: debts.account_id >? accounts.id
+Ref: debts.contact_id > contacts.id
+Ref: debt_transactions.debt_id > debts.id
+Ref: debt_transactions.transaction_id >? transactions.id
+Ref: investment_accounts.user_id > users.id
+Ref: investment_assets.investment_account_id > investment_accounts.id
+Ref: investment_transactions.user_id > users.id
+Ref: investment_transactions.investment_account_id > investment_accounts.id
+Ref: investment_transactions.investment_asset_id > investment_assets.id
+Ref: investment_transactions.funding_account_id >? accounts.id
+Ref: investment_transactions.transaction_id >? transactions.id
+Ref: physical_assets.user_id > users.id
+Ref: physical_asset_transactions.physical_asset_id > physical_assets.id
+Ref: physical_asset_transactions.account_id >? accounts.id
+Ref: physical_asset_transactions.transaction_id >? transactions.id
+Ref: budgets.user_id > users.id
+Ref: savings_goals.user_id > users.id
+Ref: savings_goals.account_id >? accounts.id

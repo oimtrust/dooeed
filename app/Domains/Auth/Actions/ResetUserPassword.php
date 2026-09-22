@@ -5,6 +5,7 @@ namespace App\Domains\Auth\Actions;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ResetUserPassword
@@ -15,7 +16,7 @@ class ResetUserPassword
     public function execute(array $data): void
     {
         $status = Password::reset($data, function (User $user, string $password): void {
-            $user->forceFill(['password' => $password])->save();
+            $user->forceFill(['password' => $password, 'remember_token' => Str::random(60)])->save();
             $user->tokens()->delete();
 
             event(new PasswordReset($user));

@@ -18,6 +18,10 @@ class AuthenticateUser
             ]);
         }
 
+        if ($user->status === 'suspended') {
+            throw ValidationException::withMessages(['email' => ['Akun ditangguhkan']]);
+        }
+
         return $user;
     }
 }

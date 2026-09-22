@@ -11,6 +11,7 @@
       <div class="container-xl">
         <span class="navbar-brand fs-4">Ruang keuangan Anda</span>
         <div class="d-flex align-items-center gap-3 ms-auto">
+          <button type="button" id="admin-panel-button" class="btn btn-primary btn-sm" data-session-url="{{ route('admin.session') }}" hidden>Admin panel</button>
           <span class="text-secondary small d-none d-md-block" id="user-email">Memuat akun…</span>
           <button type="button" id="logout-button" class="btn btn-outline-secondary btn-sm">Keluar</button>
         </div>

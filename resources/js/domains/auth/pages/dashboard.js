@@ -33,6 +33,17 @@ export function initDashboardPage() {
         });
     });
 
+    const adminButton = document.getElementById('admin-panel-button');
+    adminButton?.addEventListener('click', async () => {
+        adminButton.disabled = true;
+        try {
+            await authApi.openAdminPanel(adminButton.dataset.sessionUrl);
+        } catch {
+            adminButton.textContent = 'Gagal membuka panel. Coba lagi.';
+            adminButton.disabled = false;
+        }
+    });
+
     const cached = authStore.user;
     if (cached) {
         if (nameEl) nameEl.textContent = cached.name;
@@ -42,6 +53,7 @@ export function initDashboardPage() {
     authApi
         .me()
         .then((user) => {
+            if (adminButton) adminButton.hidden = user.role !== 'admin';
             if (nameEl) nameEl.textContent = user.name;
             if (emailEl) emailEl.textContent = user.email;
         })

@@ -10,6 +10,7 @@ The current application includes:
 
 - Registration, login, logout, and authenticated profile endpoints using Laravel Sanctum bearer tokens.
 - Password reset requests and password updates.
+- Admin user monitoring, suspension/activation, password reset, role changes, soft deletion, and audit logs.
 - Blade authentication pages and a dashboard entry point styled with Tabler.
 - Database migrations for accounts, categories, contacts, transactions, transfers, debts, investments, physical assets, budgets, and savings goals.
 
@@ -33,7 +34,7 @@ The planned financial workspace covers:
 16. Buying and Selling Assets
 17. Investments
 
-Financial migrations and navigation should not be interpreted as completed financial features. At present, the application API exposes authentication endpoints only. Financial calculations, data-entry workflows, and reports are still being developed.
+Financial migrations and navigation should not be interpreted as completed financial features. The application API currently exposes authentication and admin endpoints. Financial calculations, data-entry workflows, and reports are still being developed.
 
 ## Technology stack
 
@@ -181,6 +182,10 @@ Authorization: Bearer <data.token>
 ```
 
 The reset-password `token` comes from the password reset link; it is not a login bearer token. Login and registration are rate-limited to 10 requests per minute; password reset endpoints are limited to 5 requests per minute.
+
+## Admin panel
+
+See [Admin API, cURL examples, and web access](ADMIN_API.md) for initial admin setup, bearer authentication, user monitoring/actions, audit filters, and browser sessions.
 
 ## Project structure
 

@@ -2,12 +2,23 @@
 
 namespace App\Domains\Auth\Actions;
 
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LogoutUser
 {
-    public function execute(User $user): void
+    /**
+     * Blacklist the bearer token so it cannot be replayed.
+     *
+     * A request without a usable token has nothing to revoke, so JWT failures
+     * are swallowed to keep logout idempotent.
+     */
+    public function execute(): void
     {
-        $user->currentAccessToken()?->delete();
+        try {
+            Auth::guard('api')->logout();
+        } catch (JWTException) {
+            //
+        }
     }
 }

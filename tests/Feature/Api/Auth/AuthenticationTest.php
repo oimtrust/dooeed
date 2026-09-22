@@ -4,7 +4,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Sanctum\Sanctum;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -23,9 +22,9 @@ it('registers a user and returns a bearer token', function (): void {
 
     expect($userId)->toBeString();
     expect(Str::isUuid($userId))->toBeTrue();
+    expect(explode('.', $response->json('data.token')))->toHaveCount(3);
 
     $this->assertDatabaseHas('users', ['id' => $userId, 'email' => 'finesse@example.com']);
-    $this->assertDatabaseHas('personal_access_tokens', ['tokenable_id' => $userId]);
 
     $this->withToken($response->json('data.token'))
         ->getJson('/api/v1/auth/me')
@@ -70,21 +69,19 @@ it('rejects login with invalid credentials', function (): void {
 it('returns the authenticated user', function (): void {
     $user = User::factory()->create();
 
-    Sanctum::actingAs($user);
-
-    $this->getJson('/api/v1/auth/me')
+    $this->withToken(jwtFor($user))
+        ->getJson('/api/v1/auth/me')
         ->assertOk()
         ->assertJsonPath('data.email', $user->email);
 });
 
 it('logs out and revokes the token', function (): void {
     $user = User::factory()->create();
+    $token = jwtFor($user);
 
-    Sanctum::actingAs($user);
+    $this->withToken($token)->postJson('/api/v1/auth/logout')->assertOk();
 
-    $this->postJson('/api/v1/auth/logout')->assertOk();
-
-    expect($user->tokens()->count())->toBe(0);
+    $this->withToken($token)->getJson('/api/v1/auth/me')->assertUnauthorized();
 });
 
 it('rejects unauthenticated access to me', function (): void {
@@ -107,4 +104,46 @@ it('authenticates a subsequent request with the bearer token issued at login', f
         ->getJson('/api/v1/auth/me')
         ->assertOk()
         ->assertJsonPath('data.id', $user->id);
+});
+
+it('rejects an expired bearer token', function (): void {
+    $user = User::factory()->create();
+
+    $token = jwtFor($user, 1);
+
+    $this->travel(2)->minutes();
+
+    $this->withToken($token)->getJson('/api/v1/auth/me')->assertUnauthorized();
+});
+
+it('rejects a malformed bearer token', function (): void {
+    $this->withToken('not-a-jwt')
+        ->getJson('/api/v1/auth/me')
+        ->assertUnauthorized();
+});
+
+it('refreshes the bearer token and revokes the previous one', function (): void {
+    $user = User::factory()->create();
+    $token = jwtFor($user);
+
+    $refreshed = $this->withToken($token)
+        ->postJson('/api/v1/auth/refresh')
+        ->assertOk()
+        ->assertJsonStructure(['data' => ['token', 'token_type']])
+        ->json('data.token');
+
+    expect($refreshed)->not->toBe($token);
+
+    $this->withToken($refreshed)
+        ->getJson('/api/v1/auth/me')
+        ->assertOk()
+        ->assertJsonPath('data.id', $user->id);
+
+    resetAuthState();
+
+    $this->withToken($token)->getJson('/api/v1/auth/me')->assertUnauthorized();
+});
+
+it('rejects a refresh without a bearer token', function (): void {
+    $this->postJson('/api/v1/auth/refresh')->assertUnauthorized();
 });

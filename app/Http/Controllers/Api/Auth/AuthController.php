@@ -21,15 +21,7 @@ class AuthController extends Controller
         $user = $registerUser->execute($request->validated());
         $this->startBrowserSession($request, $user);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'data' => [
-                'user' => new UserResource($user),
-                'token' => $token,
-                'token_type' => 'Bearer',
-            ],
-        ], 201);
+        return $this->tokenResponse($user, 201);
     }
 
     public function login(LoginRequest $request, AuthenticateUser $authenticateUser): JsonResponse
@@ -41,20 +33,29 @@ class AuthController extends Controller
 
         $this->startBrowserSession($request, $user);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        return $this->tokenResponse($user);
+    }
+
+    public function refresh(): JsonResponse
+    {
+        $jwt = Auth::guard('api');
+        $token = $jwt->refresh();
+
+        // The presented token has been blacklisted, so drop it before anything
+        // else in this request asks the guard who the current user is.
+        $jwt->unsetToken();
 
         return response()->json([
             'data' => [
-                'user' => new UserResource($user),
                 'token' => $token,
                 'token_type' => 'Bearer',
             ],
         ]);
     }
 
-    public function logout(Request $request, LogoutUser $logoutUser): JsonResponse
+    public function logout(LogoutUser $logoutUser): JsonResponse
     {
-        $logoutUser->execute($request->user());
+        $logoutUser->execute();
 
         return response()->json(['message' => 'Logged out successfully.']);
     }
@@ -62,6 +63,24 @@ class AuthController extends Controller
     public function me(Request $request): UserResource
     {
         return new UserResource($request->user());
+    }
+
+    /**
+     * Issue a signed JWT for the user alongside their resource.
+     *
+     * The token is minted straight from the JWT factory instead of through
+     * Auth::guard('api')->login(), so issuing it does not also mark the user as
+     * authenticated for the remainder of this request.
+     */
+    private function tokenResponse(User $user, int $status = 200): JsonResponse
+    {
+        return response()->json([
+            'data' => [
+                'user' => new UserResource($user),
+                'token' => app('tymon.jwt')->fromUser($user),
+                'token_type' => 'Bearer',
+            ],
+        ], $status);
     }
 
     private function startBrowserSession(Request $request, User $user): void

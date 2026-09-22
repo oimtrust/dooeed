@@ -29,6 +29,16 @@ If that interface is unavailable, ask in the conversation using the same three c
 
 Use the user's language for the question and choices.
 
+## Keep the Confirmation in the Active Turn
+
+Use the available question tool to display the numbered choices and free-text field. The application controls whether this appears as a bottom sheet, dialog, or another question panel; do not promise a particular visual presentation.
+
+When a synchronous question tool is available and permitted for this question, let it wait for the answer. When using `request_user_input_async`, keep the current turn active after presenting the form. Continue useful read-only work, then use short interruptible waits (at most 60 seconds per wait) until the user's answer arrives. Do not busy-poll.
+
+Do not send a final response merely to say that confirmation is pending, and do not replace the question panel with a final numbered list. A timeout does not close the question or authorize work. Once the answer arrives, interpret it and continue the approved task in the same active workflow. If the user explicitly asks to stop or the runtime prevents waiting, explain that limitation honestly rather than claiming the question is still running.
+
+Interpret "one running token" as one active interaction/turn; do not claim the process consumes only one model token.
+
 ## Waiting and Interpreting the Answer
 
 - Wait for an explicit response before performing the proposed creation or modification. Silence, a timeout, or a preselected option is not approval.

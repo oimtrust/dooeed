@@ -14,7 +14,7 @@ Route::get('/reset-password/{token}', fn (string $token) => view('auth.reset-pas
 Route::view('/dashboard', 'dashboard')->name('dashboard');
 
 Route::post('/admin/session', [SessionController::class, 'store'])
-    ->middleware(['auth:sanctum', EnsureActiveUser::class, EnsureAdmin::class, 'throttle:10,1'])
+    ->middleware(['auth:api,web', EnsureActiveUser::class, EnsureAdmin::class, 'throttle:10,1'])
     ->name('admin.session');
 Route::delete('/admin/session', [SessionController::class, 'destroy'])->name('admin.session.destroy');
 

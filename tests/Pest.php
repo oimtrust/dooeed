@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Tests\TestCase;
 
 /*
@@ -43,7 +44,39 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Mint a JWT for the user without resolving an auth guard, so later requests in
+ * the test still have to prove themselves with the token.
+ *
+ * Pass a TTL in minutes to issue a token that expires that soon.
+ */
+function jwtFor(User $user, ?int $ttl = null): string
 {
-    // ..
+    $jwt = app('tymon.jwt');
+    $factory = $jwt->factory();
+    $originalTtl = $factory->getTTL();
+
+    if ($ttl !== null) {
+        $factory->setTTL($ttl);
+    }
+
+    $token = $jwt->fromUser($user);
+
+    $factory->setTTL($originalTtl);
+
+    return $token;
+}
+
+/**
+ * Drop the authentication state an earlier request in the same test left behind.
+ *
+ * A real request gets a fresh container, but a test reuses one, so a guard that
+ * authenticated the previous request would answer for the next one without ever
+ * looking at its bearer token. Clear the guards and the parsed token to force
+ * the next request to authenticate itself.
+ */
+function resetAuthState(): void
+{
+    app('auth')->forgetGuards();
+    app('tymon.jwt')->unsetToken();
 }

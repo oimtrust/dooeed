@@ -38,7 +38,6 @@ class ManageUser
 
             $user->setRememberToken(Str::random(60));
             $user->save();
-            $user->tokens()->delete();
 
             if (config('session.driver') === 'database') {
                 DB::connection(config('session.connection'))

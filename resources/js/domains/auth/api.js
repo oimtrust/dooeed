@@ -7,9 +7,25 @@ export const authApi = {
             baseURL: '',
             headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
         });
+
+        return body.data;
+    },
+
+    async verifyEmailOtp(payload) {
+        const { data: body } = await http.post('/session/email/otp-verify', payload, {
+            baseURL: '',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
         authStore.save(body.data);
 
         return body.data;
+    },
+
+    requestEmailOtp(email) {
+        return http.post('/session/email/otp-request', { email }, {
+            baseURL: '',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
     },
 
     async login(credentials) {

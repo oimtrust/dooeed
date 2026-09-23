@@ -2,14 +2,38 @@
 // Docs: https://dbml.dbdiagram.io/docs
 
 Table users [headercolor: #93FB13] {
-  id integer [primary key, increment]
+  id uuid [primary key]
   name varchar [not null]
   email varchar [not null, unique]
   email_verified_at timestamp
   password varchar [not null]
   remember_token varchar
+  role varchar [not null, default: 'user', note: 'user, admin']
+  status varchar [not null, default: 'active', note: 'active, suspended']
   created_at timestamp
   updated_at timestamp
+  deleted_at timestamp
+
+  indexes {
+    role
+    status
+    created_at
+  }
+}
+
+Table email_otps {
+  id bigint [primary key, increment]
+  user_id uuid [not null]
+  token varchar [not null, note: 'bcrypt hash of the six-digit OTP']
+  attempts int [not null, default: 0]
+  expires_at timestamp [not null]
+  used_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, used_at, expires_at)
+  }
 }
 
 Table account_types {
@@ -241,6 +265,7 @@ Table savings_goals {
 }
 
 Ref: accounts.user_id > users.id
+Ref: email_otps.user_id > users.id [delete: cascade]
 Ref: accounts.account_type_id > account_types.id
 Ref: categories.user_id > users.id
 Ref: categories.parent_id >? categories.id

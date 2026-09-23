@@ -3,6 +3,7 @@
 namespace App\Domains\Auth\Actions;
 
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -16,6 +17,10 @@ class AuthenticateUser
             throw ValidationException::withMessages([
                 'email' => [__('auth.failed')],
             ]);
+        }
+
+        if (! $user->email_verified_at) {
+            throw new AuthorizationException('Email address is not verified.');
         }
 
         if ($user->status === 'suspended') {

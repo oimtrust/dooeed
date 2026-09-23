@@ -5,6 +5,7 @@ import { initDashboardPage } from './domains/auth/pages/dashboard.js';
 import { initForgotPasswordPage } from './domains/auth/pages/forgot-password.js';
 import { initLoginPage } from './domains/auth/pages/login.js';
 import { initRegisterPage } from './domains/auth/pages/register.js';
+import { initVerifyEmailPage } from './domains/auth/pages/verify-email.js';
 import { initResetPasswordPage } from './domains/auth/pages/reset-password.js';
 
 import { initAdminUsers } from './domains/admin/pages/users.js';
@@ -17,6 +18,7 @@ const pages = {
     'admin-user-detail': initAdminUserDetail,
     login: initLoginPage,
     register: initRegisterPage,
+    'verify-email': initVerifyEmailPage,
     'forgot-password': initForgotPasswordPage,
     'reset-password': initResetPasswordPage,
     dashboard: initDashboardPage,

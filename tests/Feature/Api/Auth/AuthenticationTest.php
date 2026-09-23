@@ -1,13 +1,17 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\EmailOtpNotification;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 uses(LazilyRefreshDatabase::class);
 
-it('registers a user and returns a bearer token', function (): void {
+it('registers a user, sends an OTP, and does not issue a token before verification', function (): void {
+    Notification::fake();
+
     $response = $this->postJson('/api/v1/auth/register', [
         'name' => 'Finesse',
         'email' => 'finesse@example.com',
@@ -16,20 +20,18 @@ it('registers a user and returns a bearer token', function (): void {
     ]);
 
     $response->assertCreated()
-        ->assertJsonStructure(['data' => ['user' => ['id', 'name', 'email'], 'token', 'token_type']]);
+        ->assertJsonPath('message', 'OTP sent')
+        ->assertJsonStructure(['data' => ['user' => ['id', 'name', 'email']]]);
 
     $userId = $response->json('data.user.id');
 
     expect($userId)->toBeString();
     expect(Str::isUuid($userId))->toBeTrue();
-    expect(explode('.', $response->json('data.token')))->toHaveCount(3);
-
     $this->assertDatabaseHas('users', ['id' => $userId, 'email' => 'finesse@example.com']);
+    expect(User::query()->findOrFail($userId)->email_verified_at)->toBeNull();
 
-    $this->withToken($response->json('data.token'))
-        ->getJson('/api/v1/auth/me')
-        ->assertOk()
-        ->assertJsonPath('data.id', $userId);
+    Notification::assertSentTo(User::query()->findOrFail($userId), EmailOtpNotification::class);
+    $this->getJson('/api/v1/auth/me')->assertUnauthorized();
 });
 
 it('rejects registration with duplicate email', function (): void {

@@ -166,10 +166,11 @@ it('rolls back password changes and audit when reset delivery is throttled', fun
     expect(AuditLog::count())->toBe(0);
 });
 
-it('keeps browser registration authenticated without granting admin privileges', function (): void {
+it('keeps browser registration unauthenticated until email verification', function (): void {
+    Notification::fake();
     $this->postJson('/session/register', ['name' => 'New browser user', 'email' => 'browser@app.test', 'password' => 'password123', 'password_confirmation' => 'password123', 'role' => 'admin'])->assertCreated();
-    $this->assertAuthenticated('web');
-    $this->get('/admin/users')->assertForbidden();
+    $this->assertGuest('web');
+    $this->get('/admin/users')->assertRedirect(route('login'));
 });
 
 it('serves view shells without embedding user records or accepting web mutations', function (): void {

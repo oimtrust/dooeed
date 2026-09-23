@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Domains\Auth\Actions\AuthenticateUser;
 use App\Domains\Auth\Actions\LogoutUser;
 use App\Domains\Auth\Actions\RegisterUser;
+use App\Domains\Auth\Actions\RequestEmailOtp;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -16,12 +17,17 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request, RegisterUser $registerUser): JsonResponse
+    public function register(RegisterRequest $request, RegisterUser $registerUser, RequestEmailOtp $requestEmailOtp): JsonResponse
     {
         $user = $registerUser->execute($request->validated());
-        $this->startBrowserSession($request, $user);
+        $requestEmailOtp->execute($user->email);
 
-        return $this->tokenResponse($user, 201);
+        return response()->json([
+            'message' => 'OTP sent',
+            'data' => [
+                'user' => new UserResource($user),
+            ],
+        ], 201);
     }
 
     public function login(LoginRequest $request, AuthenticateUser $authenticateUser): JsonResponse

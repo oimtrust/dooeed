@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AuditLogController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\EmailOtpController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\EnsureAdmin;
@@ -20,6 +21,9 @@ Route::prefix('v1/auth')->group(function (): void {
         Route::get('/me', [AuthController::class, 'me']);
     });
 });
+
+Route::post('/email/otp-request', [EmailOtpController::class, 'request'])->middleware('throttle:email-otp');
+Route::post('/email/otp-verify', [EmailOtpController::class, 'verify'])->middleware('throttle:10,1');
 
 Route::prefix('v1/admin')->name('api.admin.')->middleware(['auth:api,web', EnsureActiveUser::class, EnsureAdmin::class])->group(function (): void {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

@@ -28,6 +28,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mailtrap' => [
+        'api_token' => env('MAILTRAP_API_TOKEN'),
+        'mode' => env('MAILTRAP_API_MODE', 'sending'),
+        'sandbox_inbox_id' => env('MAILTRAP_SANDBOX_INBOX_ID'),
+        'from' => [
+            'address' => env('MAILTRAP_FROM_ADDRESS'),
+            'name' => env('MAILTRAP_FROM_NAME', env('MAIL_FROM_NAME', env('APP_NAME'))),
+        ],
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

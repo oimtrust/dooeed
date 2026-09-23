@@ -17,13 +17,13 @@ export function initRegisterPage() {
         setLoading(form, true);
 
         try {
-            await authApi.register({
+            const { user } = await authApi.register({
                 name: form.name.value.trim(),
                 email: form.email.value.trim(),
                 password: form.password.value,
                 password_confirmation: form.password_confirmation.value,
             });
-            window.location.href = '/dashboard';
+            window.location.href = `/verify-email?email=${encodeURIComponent(user.email)}`;
         } catch (error) {
             handleApiError(form, error);
         } finally {

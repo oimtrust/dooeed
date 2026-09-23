@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class VerifyEmailOtp
 {
-    public function execute(string $email, string $code): void
+    public function execute(string $email, string $code): User
     {
         $error = DB::transaction(function () use ($email, $code): ?string {
             $user = User::query()->where('email', $email)->lockForUpdate()->first();
@@ -47,6 +47,8 @@ class VerifyEmailOtp
         if ($error) {
             $this->fail($error);
         }
+
+        return User::query()->where('email', $email)->sole();
     }
 
     private function fail(string $message): never

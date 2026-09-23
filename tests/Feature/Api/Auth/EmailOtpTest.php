@@ -61,7 +61,8 @@ it('verifies a valid OTP once', function (): void {
 
     $this->postJson('/api/email/otp-verify', ['email' => $user->email, 'code' => $notification->code])
         ->assertOk()
-        ->assertJsonPath('message', 'Email verified');
+        ->assertJsonPath('message', 'Email verified')
+        ->assertJsonStructure(['data' => ['user' => ['id', 'email'], 'token', 'token_type']]);
 
     expect($user->fresh()->email_verified_at)->not->toBeNull()
         ->and(EmailOtp::query()->sole()->used_at)->not->toBeNull();
@@ -69,6 +70,20 @@ it('verifies a valid OTP once', function (): void {
     $this->postJson('/api/email/otp-verify', ['email' => $user->email, 'code' => $notification->code])
         ->assertUnprocessable()
         ->assertJsonPath('errors.code.0', 'OTP already used');
+});
+
+it('signs a browser session in after successful OTP verification', function (): void {
+    Notification::fake();
+    $user = User::factory()->unverified()->create(['email' => 'browser-verify@app.test']);
+
+    $this->postJson('/session/email/otp-request', ['email' => $user->email])->assertOk();
+    $notification = Notification::sent($user, EmailOtpNotification::class)->sole();
+
+    $this->postJson('/session/email/otp-verify', ['email' => $user->email, 'code' => $notification->code])
+        ->assertOk()
+        ->assertJsonPath('message', 'Email verified');
+
+    $this->assertAuthenticatedAs($user, 'web');
 });
 
 it('increments attempts and rejects an incorrect OTP', function (): void {

@@ -36,6 +36,23 @@ Table email_otps {
   }
 }
 
+Table initial_wealth_entries {
+  id uuid [primary key]
+  user_id uuid [not null]
+  category varchar [not null, note: 'cash, cash_equivalent, non_current_asset, receivable, debt']
+  debt_type varchar [note: 'other, credit_card_paylater; only for debt']
+  name varchar [not null]
+  amount decimal(18,2) [not null, note: 'stored total value']
+  unit_price decimal(18,2) [note: 'per unit purchase value for asset categories']
+  quantity decimal(18,4) [note: 'asset quantity; supports fractional cash equivalents']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, category)
+  }
+}
+
 Table account_types {
   id integer [primary key, increment]
   name varchar [not null, unique, note: 'cash, bank, e-wallet, deposito, envelope']
@@ -266,6 +283,7 @@ Table savings_goals {
 
 Ref: accounts.user_id > users.id
 Ref: email_otps.user_id > users.id [delete: cascade]
+Ref: initial_wealth_entries.user_id > users.id [delete: cascade]
 Ref: accounts.account_type_id > account_types.id
 Ref: categories.user_id > users.id
 Ref: categories.parent_id >? categories.id

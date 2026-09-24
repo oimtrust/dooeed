@@ -1,5 +1,6 @@
 import { authApi } from '../api.js';
 import { authStore } from '../store.js';
+import { initInitialWealthProfile } from '../../wealth/profile.js';
 
 export function initDashboardPage() {
     if (!authStore.isAuthenticated) {
@@ -71,4 +72,6 @@ export function initDashboardPage() {
             window.location.href = '/login';
         }
     });
+
+    initInitialWealthProfile();
 }

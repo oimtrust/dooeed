@@ -91,12 +91,14 @@
         <section class="tab-pane fade" id="panel-profil-kekayaan-awal" role="tabpanel" aria-labelledby="menu-profil-kekayaan-awal" tabindex="0">
           <div class="page-pretitle">Keuangan pribadi</div>
           <h1 class="page-title mt-1 mb-4">Profil Kekayaan Awal</h1>
-          <div class="card"><div class="empty py-5">
-            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
-            <h2 class="empty-title">Profil Kekayaan Awal</h2>
-            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
-            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
-          </div></div>
+          <div id="initial-wealth-profile">
+            <div class="row row-cards mb-4">
+              <div class="col-sm-4"><div class="card"><div class="card-body d-flex align-items-center gap-3"><span class="avatar avatar-lg bg-green-lt text-green" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21v-16a2 2 0 0 1 2 -2h9a2 2 0 0 1 2 2v16"/><path d="M16 7h3a2 2 0 0 1 2 2v12"/><path d="M3 21h18"/><path d="M9 7v.01"/><path d="M9 11v.01"/><path d="M9 15v.01"/><path d="M13 7v.01"/><path d="M13 11v.01"/><path d="M13 15v.01"/></svg></span><div><div class="subheader">Total aset</div><div class="h2 mb-0" data-summary="assets">Rp0</div></div></div></div></div>
+              <div class="col-sm-4"><div class="card"><div class="card-body d-flex align-items-center gap-3"><span class="avatar avatar-lg bg-red-lt text-red" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/><path d="M7 15h.01"/><path d="M11 15h2"/></svg></span><div><div class="subheader">Total kewajiban</div><div class="h2 mb-0" data-summary="liabilities">Rp0</div></div></div></div></div>
+              <div class="col-sm-4"><div class="card"><div class="card-body d-flex align-items-center gap-3"><span class="avatar avatar-lg bg-blue-lt text-blue" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6 -6l4 4l8 -8"/><path d="M14 7h7v7"/><path d="M3 21h18"/></svg></span><div><div class="subheader">Kekayaan bersih awal</div><div class="h2 mb-0" data-summary="net_worth">Rp0</div></div></div></div></div>
+            </div>
+            <div class="row row-cards" id="initial-wealth-categories"></div>
+          </div>
         </section>
         <section class="tab-pane fade" id="panel-profil-kemampuan-menabung" role="tabpanel" aria-labelledby="menu-profil-kemampuan-menabung" tabindex="0">
           <div class="page-pretitle">Keuangan pribadi</div>

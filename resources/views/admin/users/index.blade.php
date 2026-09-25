@@ -4,7 +4,7 @@
 <h1 class="page-title mb-4">Monitoring user</h1>
 <form id="admin-filters" class="card card-body mb-4">
   <div class="row g-3 align-items-end">
-    <div class="col-md-4"><label for="search" class="form-label">Nama / email</label><input id="search" name="search" class="form-control" placeholder="Cari user"></div>
+    <div class="col-md-4"><label for="search" class="form-label">Nama / email</label><input id="search" name="search" class="form-control" placeholder="Cari user" data-i18n-placeholder></div>
     <div class="col-md-2"><label for="status" class="form-label">Status</label><select id="status" name="status" class="form-select"><option value="">Semua</option><option>active</option><option>suspended</option></select></div>
     <div class="col-md-3"><label for="sort" class="form-label">Urutkan</label><select id="sort" name="sort" class="form-select"><option value="name">Nama</option><option value="email">Email</option><option value="status">Status</option><option value="role">Role</option><option value="accounts_count">Total akun</option><option value="transactions_count">Total transaksi</option><option value="created_at" selected>Created at</option></select></div>
     <div class="col-md-2"><label for="direction" class="form-label">Arah</label><select id="direction" name="direction" class="form-select"><option value="desc">Menurun</option><option value="asc">Menaik</option></select></div>

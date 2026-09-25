@@ -12,6 +12,7 @@ Use this skill whenever adding or changing a user-facing page, Blade typography,
 - Support only `id` and `en`, persisted in `users.preferred_locale`.
 - Load the saved preference before rendering page behavior. The active language control must display the persisted value; never leave it blank or undefined.
 - Translate all visible typography on the affected page, including Admin Panel pages: headings, descriptions, form labels, placeholders, buttons, empty states, menus, alerts, and confirmation text.
+- Before delivery, compare each affected Blade template and its JavaScript-rendered states against the translation dictionary. Add entries for every static text node and every translatable attribute, including `placeholder`, `aria-label`, and title text; do not translate only headings or navigation.
 - Apply translation again after API-driven or JavaScript-rendered content is inserted into the DOM, including admin tables, detail panels, pagination, modals, and alerts.
 - Set `<html lang>` to the active locale. Keep Indonesian as the default and provide English equivalents for every new user-facing string.
 - When reading profile preferences through Axios, preserve the API envelope: profile values are in `response.data.data`.

@@ -7,6 +7,8 @@ import { initLoginPage } from './domains/auth/pages/login.js';
 import { initRegisterPage } from './domains/auth/pages/register.js';
 import { initVerifyEmailPage } from './domains/auth/pages/verify-email.js';
 import { initResetPasswordPage } from './domains/auth/pages/reset-password.js';
+import { initProfilePage } from './domains/auth/pages/profile.js';
+import { initSettingsPage } from './domains/auth/pages/settings.js';
 
 import { initAdminUsers } from './domains/admin/pages/users.js';
 import { initAdminAudit } from './domains/admin/pages/audit.js';
@@ -21,6 +23,8 @@ const pages = {
     'verify-email': initVerifyEmailPage,
     'forgot-password': initForgotPasswordPage,
     'reset-password': initResetPasswordPage,
+    profile: initProfilePage,
+    settings: initSettingsPage,
     dashboard: initDashboardPage,
 };
 

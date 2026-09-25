@@ -6,6 +6,8 @@ Table users [headercolor: #93FB13] {
   name varchar [not null]
   email varchar [not null, unique]
   email_verified_at timestamp
+  preferred_locale varchar(2) [not null, default: 'id']
+  preferred_currency varchar(3) [not null, default: 'IDR']
   password varchar [not null]
   remember_token varchar
   role varchar [not null, default: 'user', note: 'user, admin']

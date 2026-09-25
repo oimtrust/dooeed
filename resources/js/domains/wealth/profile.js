@@ -1,4 +1,6 @@
 import { initialWealthApi } from './api.js';
+import { authApi } from '../auth/api.js';
+import { applyLocale } from '../../lib/localization.js';
 
 const categories = [
     ['cash', 'Kas', 'Nama Rekening', 'Saldo'],
@@ -8,7 +10,9 @@ const categories = [
     ['debt', 'Utang', 'Pemberi Utang', 'Nominal'],
 ];
 const assetCategories = new Set(['cash_equivalent', 'non_current_asset']);
-const money = (value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 2 }).format(Number(value));
+let locale = 'id-ID';
+let currency = 'IDR';
+const money = (value) => new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 2 }).format(Number(value));
 
 export function initInitialWealthProfile() {
     const root = document.getElementById('initial-wealth-profile');
@@ -49,4 +53,11 @@ export function initInitialWealthProfile() {
         if (event.target.dataset.delete && confirm('Hapus data ini?')) { await initialWealthApi.destroy(id); await load(); }
     });
     load().catch(() => { list.textContent = 'Data profil kekayaan tidak dapat dimuat.'; });
+    authApi.profile().then(({ data: body }) => {
+        const data = body.data;
+        locale = data.preferred_locale === 'en' ? 'en-US' : 'id-ID';
+        currency = data.preferred_currency;
+        if (summary) render();
+        applyLocale(data.preferred_locale);
+    });
 }

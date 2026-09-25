@@ -2,6 +2,7 @@ import { adminApi } from '../api.js';
 import { bindUserActions } from '../components/user-actions.js';
 import { renderUserDetail } from '../components/user-detail.js';
 import { handleError, message } from '../components/ui.js';
+import { withAdminLocale } from '../localization.js';
 
 export function initAdminUserDetail() {
     const detail = document.getElementById('user-detail');
@@ -26,7 +27,9 @@ export function initAdminUserDetail() {
             loading.hidden = true;
         }
     }
-    bindUserActions(() => user, load);
-    retry.addEventListener('click', load);
-    load();
+    withAdminLocale(() => {
+        bindUserActions(() => user, load);
+        retry.addEventListener('click', load);
+        load();
+    });
 }

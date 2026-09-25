@@ -1,4 +1,5 @@
 import { emptyRow, handleError, message } from './ui.js';
+import { applyLocale } from '../../../lib/localization.js';
 
 export function initList(fetchRows, renderRow, columns) {
     const form = document.getElementById('admin-filters');
@@ -44,6 +45,7 @@ export function initList(fetchRows, renderRow, columns) {
                 });
                 pagination.append(button);
             }
+            applyLocale(document.documentElement.lang);
         } catch (error) {
             if (currentRequest !== requestNumber) return;
             handleError(error);

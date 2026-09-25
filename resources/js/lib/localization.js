@@ -1,0 +1,16 @@
+const english = {
+    'Ruang keuangan Anda': 'Your financial space', 'Keuangan pribadi': 'Personal finance', 'Profil Kekayaan Awal': 'Initial Wealth Profile', 'Dashboard': 'Dashboard', 'Profile': 'Profile', 'Ubah password': 'Change password', 'Password saat ini': 'Current password', 'Password baru': 'New password', 'Konfirmasi password baru': 'Confirm new password', 'Simpan password': 'Save password', 'Ringkasan keuangan': 'Financial summary', 'Perjalanan finansial Anda': 'Your financial journey', 'Selangkah lebih terencana': 'One step more intentional', 'Lengkapi profil kekayaan': 'Complete wealth profile', 'Total aset': 'Total assets', 'Total kewajiban': 'Total liabilities', 'Kekayaan bersih': 'Net worth', 'Kemampuan menabung': 'Savings capacity', 'Mulai dari sini': 'Start here', 'Catat kekayaan awal': 'Record your initial wealth', 'Susun anggaran': 'Create a budget', 'Aktivitas keuangan': 'Financial activity', 'Profil Kemampuan Menabung': 'Savings Capacity Profile', 'Cek Kesehatan Finansial': 'Financial Health Check', 'Level Kekayaan': 'Wealth Level', 'Saran Budgeting': 'Budgeting Suggestions', 'Atur Budgeting': 'Budgeting', 'Mutasi Rekening': 'Account Transactions', 'Pindah Kas/ Tabung': 'Transfer Cash / Savings', 'Pendapatan': 'Income', 'Pengeluaran': 'Expenses', 'Utang': 'Debt', 'Piutang': 'Receivables', 'Beli Jual Barang': 'Buy & Sell Items', 'Investasi': 'Investments', 'Keluar': 'Logout', 'Akun': 'Account', 'Tambah': 'Add', 'Ubah': 'Edit', 'Hapus': 'Delete', 'Batal': 'Cancel', 'Simpan': 'Save', 'Belum ada data.': 'No data yet.', 'Data profil kekayaan tidak dapat dimuat.': 'Initial wealth data could not be loaded.', 'PREFERENSI AKUN': 'ACCOUNT PREFERENCES', 'Atur bahasa dan mata uang agar ringkasan keuangan terasa lebih personal.': 'Set your language and currency to make your financial summary feel more personal.', 'Pilih Bahasa Indonesia atau English untuk tampilan aplikasi.': 'Choose Bahasa Indonesia or English for the application interface.', 'Bahasa tampilan': 'Display language', 'Mata uang': 'Currency', 'Simpan pengaturan': 'Save settings',
+    'Daftar User': 'User List', 'Audit Log': 'Audit Log', 'Cari nama atau email': 'Search name or email', 'Urutkan': 'Sort by', 'Terapkan': 'Apply', 'Tidak ada data ditemukan.': 'No data found.', 'Sebelumnya': 'Previous', 'Berikutnya': 'Next', 'Halaman': 'Page', 'data': 'records', 'Akses ditolak.': 'Access denied.', 'Data gagal dimuat. Silakan coba lagi.': 'Data could not be loaded. Please try again.', 'User tidak ditemukan.': 'User not found.', 'Belum ada transaksi.': 'No transactions yet.', 'Belum ada saldo.': 'No balances yet.', 'Belum ada investasi.': 'No investments yet.', 'akun': 'accounts', 'Terdaftar': 'Registered', 'Ubah role': 'Change role', 'Hapus user': 'Delete user', 'Alasan (wajib)': 'Reason (required)', 'Alasan (opsional)': 'Reason (optional)',
+};
+
+export function applyLocale(locale) {
+    document.documentElement.lang = locale;
+    if (locale !== 'en') return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+        const value = node.nodeValue.trim();
+        if (english[value]) node.nodeValue = node.nodeValue.replace(value, english[value]);
+    });
+}

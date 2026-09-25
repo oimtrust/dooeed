@@ -1,6 +1,7 @@
 import { authApi } from '../api.js';
 import { authStore } from '../store.js';
 import { initInitialWealthProfile } from '../../wealth/profile.js';
+import { applyLocale } from '../../../lib/localization.js';
 
 export function initDashboardPage() {
     if (!authStore.isAuthenticated) {
@@ -61,6 +62,8 @@ export function initDashboardPage() {
         .catch(() => {
             window.location.href = '/login';
         });
+
+    authApi.profile().then(({ data: body }) => applyLocale(body.data.preferred_locale));
 
     logoutBtn?.addEventListener('click', async () => {
         logoutBtn.classList.add('btn-loading');

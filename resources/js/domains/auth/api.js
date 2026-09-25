@@ -71,4 +71,8 @@ export const authApi = {
     resetPassword(payload) {
         return http.post('/auth/reset-password', payload);
     },
+
+    profile: () => http.get('/profile'),
+    updatePassword: (payload) => http.put('/profile/password', payload),
+    updatePreferences: (payload) => http.put('/profile/preferences', payload),
 };

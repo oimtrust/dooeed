@@ -1,6 +1,7 @@
 import { authApi } from '../api.js';
 import { authStore } from '../store.js';
 import { initInitialWealthProfile } from '../../wealth/profile.js';
+import { initSavingsCapacityProfile } from '../../wealth/savings-capacity-profile.js';
 import { applyLocale } from '../../../lib/localization.js';
 
 export function initDashboardPage() {
@@ -77,4 +78,5 @@ export function initDashboardPage() {
     });
 
     initInitialWealthProfile();
+    initSavingsCapacityProfile();
 }

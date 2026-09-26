@@ -101,14 +101,23 @@
           </div>
         </section>
         <section class="tab-pane fade" id="panel-profil-kemampuan-menabung" role="tabpanel" aria-labelledby="menu-profil-kemampuan-menabung" tabindex="0">
-          <div class="page-pretitle">Keuangan pribadi</div>
-          <h1 class="page-title mt-1 mb-4">Profil Kemampuan Menabung</h1>
-          <div class="card"><div class="empty py-5">
-            <span class="badge bg-blue-lt mb-3">Segera tersedia</span>
-            <h2 class="empty-title">Profil Kemampuan Menabung</h2>
-            <p class="empty-subtitle text-secondary">Fitur ini sedang disiapkan. Pencatatan dan pengelolaan data belum tersedia.</p>
-            <div class="empty-action"><button type="button" class="btn btn-primary" data-dashboard-menu="dashboard">Kembali ke Dashboard</button></div>
-          </div></div>
+          <div class="page-pretitle">Keuangan pribadi</div><h1 class="page-title mt-1 mb-2">Profil Kemampuan Menabung</h1><p class="text-secondary mb-4">Perbarui data ini secara berkala agar rencana keuangan tetap relevan.</p>
+          <form id="savings-capacity-form" data-currency="IDR"><div id="savings-success" class="alert alert-success" hidden>Profil berhasil disimpan.</div>
+            <div class="row row-cards"><div class="col-lg-6"><div class="card"><div class="card-header"><h2 class="card-title">Rencana Nabung Setiap Bulan</h2></div><div class="card-body">
+              <label class="form-label">Pemasukan Bulanan (Average)<input class="form-control" type="text" inputmode="numeric" name="monthly_income" required><span class="form-hint">Rata-rata pemasukan selama 12 bulan terakhir.</span></label>
+              <label class="form-label">Pengeluaran Bulanan (Average)<input class="form-control" type="text" inputmode="numeric" name="monthly_expenses" required><span class="form-hint">Tidak termasuk cicilan utang, investasi, dan pembelian mewah.</span></label>
+              <label class="form-label">Kemampuan Menabung (Average)<input class="form-control" name="savings_capacity" readonly></label><p class="form-hint">Batas atas kemampuan menabung setiap bulan.</p>
+            </div></div></div>
+            <div class="col-lg-6"><div class="card"><div class="card-header"><h2 class="card-title">Dana Darurat</h2></div><div class="card-body">
+              <label class="form-label">Tanggal Lahir<input class="form-control" type="date" name="date_of_birth" required></label><label class="form-label">Usia Hari ini<input class="form-control" name="current_age" readonly></label>
+              <label class="form-label">Usia Pensiun<input class="form-control" type="number" min="1" step="1" name="retirement_age" required></label><label class="form-label">Sisa waktu sebelum pensiun (tahun)<input class="form-control" name="remaining_years" readonly></label>
+              <label class="form-label">Dana yang dibutuhkan sebelum pensiun<input class="form-control" name="pre_retirement_fund" readonly></label><p class="form-hint">Pengeluaran bulanan × 12 × sisa waktu sebelum pensiun.</p>
+            </div></div></div>
+            <div class="col-lg-6"><div class="card"><div class="card-header"><h2 class="card-title">Dana Pensiun</h2></div><div class="card-body">
+              <label class="form-label">Usia Memberi Warisan<input class="form-control" type="number" min="1" step="1" name="inheritance_age" required></label><label class="form-label">Durasi pensiun (tahun)<input class="form-control" name="retirement_duration" readonly></label>
+              <label class="form-label">Dana yang dibutuhkan saat pensiun<input class="form-control" name="retirement_fund" readonly></label><p class="form-hint">Pengeluaran bulanan × 12 × durasi pensiun.</p>
+            </div></div></div></div><div class="mt-4"><button class="btn btn-primary" type="submit">Simpan profil</button></div>
+          </form>
         </section>
         <section class="tab-pane fade" id="panel-cek-kesehatan-finansial" role="tabpanel" aria-labelledby="menu-cek-kesehatan-finansial" tabindex="0">
           <div class="page-pretitle">Keuangan pribadi</div>

@@ -38,6 +38,18 @@ Table email_otps {
   }
 }
 
+Table savings_capacity_profiles {
+  id uuid [primary key]
+  user_id uuid [not null, unique]
+  monthly_income decimal(18,2) [not null]
+  monthly_expenses decimal(18,2) [not null]
+  date_of_birth date [not null]
+  retirement_age smallint [not null]
+  inheritance_age smallint [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
 Table initial_wealth_entries {
   id uuid [primary key]
   user_id uuid [not null]
@@ -319,3 +331,5 @@ Ref: physical_asset_transactions.transaction_id >? transactions.id
 Ref: budgets.user_id > users.id
 Ref: savings_goals.user_id > users.id
 Ref: savings_goals.account_id >? accounts.id
+
+Ref: savings_capacity_profiles.user_id > users.id

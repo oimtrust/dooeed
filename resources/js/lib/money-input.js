@@ -3,7 +3,8 @@ export function unformatMoneyInput(value) {
 }
 
 export function formatMoneyInput(value) {
-    const digits = unformatMoneyInput(value);
+    const serverDecimal = String(value ?? '').match(/^(\d+)\.\d{1,2}$/);
+    const digits = serverDecimal ? serverDecimal[1] : unformatMoneyInput(value);
     return digits ? new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Number(digits)) : '';
 }
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\EmailOtpController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\Wealth\InitialWealthEntryController;
 use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\EnsureAdmin;
@@ -28,6 +29,9 @@ Route::post('/email/otp-verify', [EmailOtpController::class, 'verify'])->middlew
 
 Route::prefix('v1')->middleware(['auth:api,web', EnsureActiveUser::class])->group(function (): void {
     Route::apiResource('initial-wealth-entries', InitialWealthEntryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('profile', [ProfileController::class, 'show']);
+    Route::put('profile/preferences', [ProfileController::class, 'updatePreferences']);
+    Route::put('profile/password', [ProfileController::class, 'updatePassword']);
 });
 
 Route::prefix('v1/admin')->name('api.admin.')->middleware(['auth:api,web', EnsureActiveUser::class, EnsureAdmin::class])->group(function (): void {

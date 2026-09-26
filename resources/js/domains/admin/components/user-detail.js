@@ -1,4 +1,5 @@
 import { auditUrl, date, emptyRow, money, row, textList } from './ui.js';
+import { applyLocale } from '../../../lib/localization.js';
 
 export function renderUserDetail(data) {
     const detail = document.getElementById('user-detail');
@@ -21,4 +22,5 @@ export function renderUserDetail(data) {
         button.hidden = (button.dataset.action === 'suspend' && data.user.status !== 'active')
             || (['activate', 'delete'].includes(button.dataset.action) && data.user.status !== 'suspended');
     });
+    applyLocale(document.documentElement.lang);
 }

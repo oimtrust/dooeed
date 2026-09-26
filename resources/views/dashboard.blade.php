@@ -13,7 +13,7 @@
         <div class="d-flex align-items-center gap-3 ms-auto">
           <button type="button" id="admin-panel-button" class="btn btn-primary btn-sm" data-session-url="{{ route('admin.session') }}" hidden>Admin panel</button>
           <span class="text-secondary small d-none d-md-block" id="user-email">Memuat akun…</span>
-          <button type="button" id="logout-button" class="btn btn-outline-secondary btn-sm">Keluar</button>
+          <div class="dropdown"><button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Akun</button><div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"><a class="dropdown-item" href="{{ route('profile') }}"><svg class="icon dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></svg>Profile</a><a class="dropdown-item" href="{{ route('settings') }}"><svg class="icon dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a2 2 0 1 0 0 4a2 2 0 0 0 0 -4"/><path d="M12 17a2 2 0 1 0 0 4a2 2 0 0 0 0 -4"/><path d="M3 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M17 12h4"/><path d="M7 12h10"/></svg>Settings &amp; Privacy</a><div class="dropdown-divider"></div><button type="button" id="logout-button" class="dropdown-item text-danger">Logout</button></div></div>
         </div>
       </div>
     </header>

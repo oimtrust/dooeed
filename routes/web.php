@@ -14,6 +14,8 @@ Route::view('/verify-email', 'auth.verify-email')->name('email.verify');
 Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
 Route::get('/reset-password/{token}', fn (string $token) => view('auth.reset-password', ['token' => $token]))->name('password.reset');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
+Route::view('/profile', 'profile')->name('profile');
+Route::view('/settings', 'settings')->name('settings');
 
 Route::post('/admin/session', [SessionController::class, 'store'])
     ->middleware(['auth:api,web', EnsureActiveUser::class, EnsureAdmin::class, 'throttle:10,1'])

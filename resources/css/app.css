@@ -2,3 +2,15 @@
 
 /* App-specific overrides. Prefer Tabler components and CSS variables
    (--tblr-*) over custom CSS. Never reintroduce Tailwind here. */
+
+.settings-page { background: linear-gradient(135deg, var(--tblr-bg-surface-secondary), var(--tblr-bg-surface)); }
+.settings-hero { padding: 1rem .25rem; }
+.settings-eyebrow { color: var(--tblr-primary); font-size: .7rem; font-weight: 700; letter-spacing: .12em; margin-top: 1.5rem; }
+.settings-hero h1 { font-size: clamp(2rem, 7vw, 3rem); font-weight: 700; letter-spacing: -.05em; margin: .4rem 0; }
+.settings-hero h1 span { color: var(--tblr-primary); }
+.settings-hero p { color: var(--tblr-secondary); font-size: 1rem; line-height: 1.65; }
+.settings-card { border: 0; box-shadow: 0 1rem 3rem rgba(var(--tblr-body-color-rgb), .08); }
+.settings-section { align-items: center; display: flex; gap: 1rem; margin-bottom: 1.25rem; }
+.settings-section-icon { align-items: center; border-radius: 1rem; display: flex; font-size: 1.2rem; font-weight: 700; height: 3rem; justify-content: center; width: 3rem; }
+.settings-section h2 { font-size: 1rem; margin: 0; }
+.settings-section p { color: var(--tblr-secondary); font-size: .875rem; margin: .15rem 0 0; }

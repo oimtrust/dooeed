@@ -1,6 +1,7 @@
 import { initialWealthApi } from './api.js';
 import { authApi } from '../auth/api.js';
 import { applyLocale, translate } from '../../lib/localization.js';
+import { bindMoneyInput, unformatMoneyInput } from '../../lib/money-input.js';
 
 const categories = [
     ['cash', 'Kas', 'Nama Rekening', 'Saldo'],
@@ -44,10 +45,14 @@ export function initInitialWealthProfile() {
         form.style.maxWidth = '440px'; form.style.width = 'calc(100% - 2rem)';
         form.innerHTML = `<h2 class="card-title mb-3">${translate(entry ? 'Ubah' : 'Tambah')} ${displayTitle}</h2><label class="form-label">${displayNameLabel}<input class="form-control" name="name" required value="${entry?.name ?? ''}"></label>${asset ? `<label class="form-label">${translate('Nilai Beli')}<input class="form-control" type="number" min="0" step="0.01" name="unit_price" required value="${entry?.unit_price ?? ''}"></label><label class="form-label">${translate('Jumlah')}<input class="form-control" type="number" min="0.0001" step="0.0001" name="quantity" required value="${entry?.quantity ?? ''}"></label><p class="form-hint">${translate('Total:')} <strong data-total>${money(0)}</strong></p>` : `<label class="form-label">${displayAmountLabel}<input class="form-control" type="number" min="0" step="0.01" name="amount" required value="${entry?.amount ?? ''}"></label>`}${category === 'debt' ? `<label class="form-label">${translate('Jenis Utang')}<select class="form-select" name="debt_type" required><option value="other">${translate('Selain Kartu Kredit & Paylater')}</option><option value="credit_card_paylater">${translate('Kartu Kredit & Paylater')}</option></select></label>` : ''}<div class="d-flex gap-2 justify-content-end mt-2"><button type="button" class="btn btn-link" data-cancel>${translate('Batal')}</button><button class="btn btn-primary">${translate('Simpan')}</button></div>`;
         if (entry?.debt_type) form.debt_type.value = entry.debt_type;
-        const refreshTotal = () => { const total = Number(form.unit_price?.value || 0) * Number(form.quantity?.value || 0); form.querySelector('[data-total]')?.replaceChildren(document.createTextNode(money(total))); };
+        const refreshTotal = () => { const total = Number(unformatMoneyInput(form.unit_price?.value)) * Number(form.quantity?.value || 0); form.querySelector('[data-total]')?.replaceChildren(document.createTextNode(money(total))); };
+        [form.elements.amount, form.elements.unit_price].filter(Boolean).forEach(bindMoneyInput);
         form.unit_price?.addEventListener('input', refreshTotal); form.quantity?.addEventListener('input', refreshTotal); refreshTotal();
         form.querySelector('[data-cancel]').addEventListener('click', () => form.remove());
-        form.addEventListener('submit', async (event) => { event.preventDefault(); const payload = Object.fromEntries(new FormData(form)); payload.category = category; try { entry ? await initialWealthApi.update(entry.id, payload) : await initialWealthApi.store(payload); form.remove(); await load(); } catch (error) { alert(error.response?.data?.message ?? translate('Data gagal disimpan.')); } });
+        form.addEventListener('submit', async (event) => { event.preventDefault(); const payload = Object.fromEntries(new FormData(form));
+            if (payload.amount !== undefined) payload.amount = unformatMoneyInput(payload.amount);
+            if (payload.unit_price !== undefined) payload.unit_price = unformatMoneyInput(payload.unit_price);
+            payload.category = category; try { entry ? await initialWealthApi.update(entry.id, payload) : await initialWealthApi.store(payload); form.remove(); await load(); } catch (error) { alert(error.response?.data?.message ?? translate('Data gagal disimpan.')); } });
         document.body.append(form);
     };
     list.addEventListener('click', async (event) => {
